@@ -245,8 +245,8 @@ body {
   display: none;
 }
 
-.task-menu:focus ~ .dropdown-menu,
-.dropdown-menu.show {
+.task-menu:focus .dropdown-menu,
+.task-header.show .dropdown-menu {
   display: block;
 }
 
@@ -590,11 +590,18 @@ input[name="color"] {
 
 .todo-list li {
   display: flex;
-
   align-items: center;
   gap: 10px;
   text-transform: capitalize;
   padding-block: 4px;
+}
+
+.todo-list li span {
+  font-size: 12px;
+}
+
+.todo-list li p {
+  margin-bottom: 2px;
 }
 
 .my-date {

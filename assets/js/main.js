@@ -18,11 +18,17 @@ let editIndex = null;
 
 addBtn.onclick = function () {
   handleOpenModal();
-
-  setTimeout(() => taskTitle.focus(), 100);
 };
 
 todoList.onclick = function (event) {
+  // const taskMenu = event.target.closest(".task-menu");
+  // const taskHeader = event.target.closest(".task-header");
+
+  // $$(".task-header.show")?.forEach((header) => header.classList.remove("show"));
+  // if (taskMenu && taskHeader) {
+  //   taskHeader.classList.add("show");
+  // }
+
   const editBtn = event.target.closest(".edit-btn");
   const deleteBtn = event.target.closest(".delete-btn");
   const completeBtn = event.target.closest(".complete-btn");
@@ -93,6 +99,7 @@ todoList.onclick = function (event) {
 
 function handleOpenModal() {
   formApp.classList.add("show");
+  setTimeout(() => taskTitle.focus(), 200);
 }
 
 function handleCloseModal() {
@@ -174,7 +181,7 @@ function renderTask(tasks) {
 
   const html = tasks
     .map((task, index) => {
-      const statusCheck = task.percent >= 100 ? "✅" : "⛔";
+      const check = task.percent >= 100 ? "✅" : "⛔";
       const statusText = task.percent >= 100 ? "✅ Đã hoàn thành" : "🛑 Chưa hoàn thành";
       const statusColor = task.percent >= 100 ? "green" : "red";
 
@@ -184,28 +191,29 @@ function renderTask(tasks) {
           <h3 class="task-title task-date">${task.dueDate}</h3>
           <button class="task-menu">
             <i class="fa-solid fa-ellipsis fa-icon"></i>
+            <span class="dropdown-menu">
+              <span class="dropdown-item edit-btn" data-index="${index}">
+                <i class="fa-solid fa-pen-to-square fa-icon"></i>
+                Edit
+              </span>
+              <span class="dropdown-item complete complete-btn" data-index="${index}">
+                <i class="fa-solid fa-check fa-icon"></i>
+                Cập nhật tiến độ
+              </span>
+              <span class="dropdown-item delete delete-btn" data-index="${index}">
+                <i class="fa-solid fa-trash fa-icon"></i>
+                Delete
+              </span>
+            </span>
           </button>
-          <div class="dropdown-menu">
-            <div class="dropdown-item edit-btn" data-index="${index}">
-              <i class="fa-solid fa-pen-to-square fa-icon"></i>
-              Edit
-            </div>
-            <div class="dropdown-item complete complete-btn" data-index="${index}">
-              <i class="fa-solid fa-check fa-icon"></i>
-              Cập nhật tiến độ
-            </div>
-            <div class="dropdown-item delete delete-btn" data-index="${index}">
-              <i class="fa-solid fa-trash fa-icon"></i>
-              Delete
-            </div>
-          </div>
         </div>
         <ul class="todo-list">
-          <li><span>${statusCheck}</span> ${task.task1}</li>
-          ${task.task2 ? `<li><span>${statusCheck}</span> ${task.task2}</li>` : ""}
-          ${task.task3 ? `<li><span>${statusCheck}</span> ${task.task3}</li>` : ""}
-          ${task.task4 ? `<li><span>${statusCheck}</span> ${task.task4}</li>` : ""}
-          ${task.task5 ? `<li><span>${statusCheck}</span> ${task.task5}</li>` : ""}
+          <li><span>${check}</span>
+          <p>${task.task1}</p></li>
+          ${task.task2 ? `<li><span>${check}</span><p>${task.task2}</p></li>` : ""}
+          ${task.task3 ? `<li><span>${check}</span><p>${task.task3}</p></li>` : ""}
+          ${task.task4 ? `<li><span>${check}</span><p>${task.task4}</p></li>` : ""}
+          ${task.task5 ? `<li><span>${check}</span><p>${task.task5}</p></li>` : ""}
         </ul>
         <div class="task-time">
           ${task.start_time ? task.start_time : "00:00"} - ${task.end_time ? task.end_time : "24:00"}
