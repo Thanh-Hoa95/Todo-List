@@ -199,8 +199,6 @@ function renderTask(tasks) {
               Delete
             </div>
           </div>
-
-
         </div>
         <ul class="todo-list">
           <li><span>${statusCheck}</span> ${task.task1}</li>
