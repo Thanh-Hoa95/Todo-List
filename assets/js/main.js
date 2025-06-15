@@ -12,116 +12,107 @@ const searchInput = $(".search-input");
 
 const inputDate = $("#taskDate");
 const output = $(".formatted-date");
-let formattedDate = "";
 
 let editIndex = null;
+const days = ["Chủ Nhật", "Thứ Hai", "Thứ Ba", "Thứ Tư", "Thứ Năm", "Thứ Sáu", "Thứ Bảy"];
 
 addBtn.onclick = function () {
-  handleOpenModal();
+    handleOpenModal();
 };
 
 todoList.onclick = function (event) {
-  // const taskMenu = event.target.closest(".task-menu");
-  // const taskHeader = event.target.closest(".task-header");
+    const taskHeader = event.target.closest(".task-header");
 
-  // $$(".task-header.show")?.forEach((header) => header.classList.remove("show"));
-  // if (taskMenu && taskHeader) {
-  //   taskHeader.classList.add("show");
-  // }
+    if (taskHeader) {
+        const editBtn = event.target.closest(".edit-btn");
+        const deleteBtn = event.target.closest(".delete-btn");
+        const completeBtn = event.target.closest(".complete-btn");
+        const taskIndex = taskHeader.dataset.index;
+        const task = todoTask[taskIndex];
+        output.textContent = formattedDate(task.dueDate);
 
-  const editBtn = event.target.closest(".edit-btn");
-  const deleteBtn = event.target.closest(".delete-btn");
-  const completeBtn = event.target.closest(".complete-btn");
+        if (editBtn) {
+            editIndex = taskIndex;
 
-  if (editBtn) {
-    const taskIndex = editBtn.dataset.index;
-    const task = todoTask[taskIndex];
+            for (const key in task) {
+                const input = $(`[name="${key}"]`);
+                if (input) input.value = task[key];
+            }
 
-    editIndex = taskIndex;
+            handleOpenModal();
 
-    for (const key in task) {
-      const input = $(`[name="${key}"]`);
-      if (input) input.value = task[key];
+            const formTitle = formApp.querySelector(".modal-title");
+            if (formTitle) {
+                formTitle.dataset.original = formTitle.textContent;
+                formTitle.textContent = "Edit Task";
+            }
+
+            const btnSubmit = formApp.querySelector(".btn-submit");
+
+            if (btnSubmit) {
+                btnSubmit.dataset.original = btnSubmit.textContent;
+                btnSubmit.textContent = "Save";
+            }
+        }
+
+        if (deleteBtn) {
+            if (confirm(`Bạn có muốn xóa công việc ${task.title} không?`)) {
+                todoTask.splice(taskIndex, 1);
+                saveTodoTask();
+                renderTask(todoTask);
+            }
+        }
+
+        if (completeBtn) {
+            editIndex = taskIndex;
+
+            for (const key in task) {
+                const input = $(`[name="${key}"]`);
+                if (input) input.value = task[key];
+            }
+
+            handleOpenModal();
+
+            const formTitle = formApp.querySelector(".modal-title");
+            if (formTitle) {
+                formTitle.dataset.original = formTitle.textContent;
+                formTitle.textContent = "Progress Update:";
+            }
+
+            const btnSubmit = formApp.querySelector(".btn-submit");
+            if (btnSubmit) {
+                btnSubmit.dataset.original = btnSubmit.textContent;
+                btnSubmit.textContent = "Update";
+            }
+        }
     }
-
-    handleOpenModal();
-
-    const formTitle = formApp.querySelector(".modal-title");
-    if (formTitle) {
-      formTitle.dataset.original = formTitle.textContent;
-      formTitle.textContent = "Edit Task";
-    }
-
-    const btnSubmit = formApp.querySelector(".btn-submit");
-    if (btnSubmit) {
-      btnSubmit.dataset.original = btnSubmit.textContent;
-      btnSubmit.textContent = "Save";
-    }
-  }
-
-  if (deleteBtn) {
-    const taskIndex = deleteBtn.dataset.index;
-    const task = todoTask[taskIndex];
-
-    if (confirm(`Bạn có muốn xóa công việc ${task.title} không?`)) {
-      todoTask.splice(taskIndex, 1);
-      saveTodoTask();
-      renderTask(todoTask);
-    }
-  }
-
-  if (completeBtn) {
-    const taskIndex = completeBtn.dataset.index;
-    const tasks = todoTask[taskIndex];
-
-    editIndex = taskIndex;
-
-    for (const key in tasks) {
-      const input = $(`[name="${key}"]`);
-      if (input) input.value = tasks[key];
-    }
-
-    handleOpenModal();
-
-    const formTitle = formApp.querySelector(".modal-title");
-    if (formTitle) {
-      formTitle.dataset.original = formTitle.textContent;
-      formTitle.textContent = "Cập nhật tiến độ";
-    }
-
-    const btnSubmit = formApp.querySelector(".btn-submit");
-    if (btnSubmit) {
-      btnSubmit.dataset.original = btnSubmit.textContent;
-      btnSubmit.textContent = "Cập nhật";
-    }
-  }
 };
 
 function handleOpenModal() {
-  formApp.classList.add("show");
-  setTimeout(() => taskTitle.focus(), 200);
+    formApp.classList.add("show");
+    setTimeout(() => taskTitle.focus(), 200);
 }
 
 function handleCloseModal() {
-  formApp.classList.remove("show");
+    formApp.classList.remove("show");
 
-  if (editIndex !== null) {
-    const formTitle = formApp.querySelector(".modal-title");
-    if (formTitle?.dataset.original) {
-      formTitle.textContent = formTitle.dataset.original;
-      delete formTitle.dataset.original;
+    if (editIndex !== null) {
+        const formTitle = formApp.querySelector(".modal-title");
+        if (formTitle?.dataset.original) {
+            formTitle.textContent = formTitle.dataset.original;
+            delete formTitle.dataset.original;
+        }
+
+        const btnSubmit = formApp.querySelector(".btn-submit");
+        if (btnSubmit?.dataset.original) {
+            btnSubmit.textContent = btnSubmit.dataset.original;
+            delete btnSubmit.dataset.original;
+        }
     }
 
-    const btnSubmit = formApp.querySelector(".btn-submit");
-    if (btnSubmit?.dataset.original) {
-      btnSubmit.textContent = btnSubmit.dataset.original;
-      delete btnSubmit.dataset.original;
-    }
-  }
-
-  formApp.querySelector(".modal").scrollTop = 0;
-  todoForm.reset();
-  editIndex = null;
+    formApp.querySelector(".modal").scrollTop = 0;
+    todoForm.reset();
+    editIndex = null;
 }
 
 modalClose.onclick = btnClose.onclick = handleCloseModal;
@@ -129,78 +120,83 @@ modalClose.onclick = btnClose.onclick = handleCloseModal;
 let todoTask = JSON.parse(localStorage.getItem("todoTasks")) ?? [];
 
 searchInput.oninput = function (event) {
-  const keyword = event.target.value.toLowerCase();
-  const filtered = todoTask.filter((task) => task.dueDate.toLowerCase().includes(keyword));
-  renderTask(filtered);
+    const keyword = event.target.value.toLowerCase();
+    const filtered = todoTask.filter((task) => task.dueDate.toLowerCase().includes(keyword));
+    renderTask(filtered);
 };
 
-inputDate.addEventListener("change", function () {
-  const days = ["Chủ Nhật", "Thứ Hai", "Thứ Ba", "Thứ Tư", "Thứ Năm", "Thứ Sáu", "Thứ Bảy"];
-  const rawDate = this.value;
+function formattedDate(dates) {
+    const day = days[new Date(dates).getDay()];
+    const [year, month, date] = dates.split("-");
+    return `${day} - ${date}/${month}/${year}`;
+}
 
-  if (rawDate) {
-    const day = days[new Date(rawDate).getDay()];
-    const [year, month, date] = rawDate.split("-");
-    formattedDate = `${day} - ${date}/${month}/${year}`;
-    output.textContent = formattedDate;
-  }
+inputDate.addEventListener("change", function () {
+    const rawDate = this.value;
+    if (rawDate) {
+        output.textContent = formattedDate(rawDate);
+    }
 });
 
 todoForm.onsubmit = function (event) {
-  event.preventDefault();
+    event.preventDefault();
 
-  const formData = Object.fromEntries(new FormData(todoForm));
+    const formData = Object.fromEntries(new FormData(todoForm));
 
-  // Xử lý phần trăm
-  formData.percent = Number(formData.percent || 0);
-  formData.isCompleted = formData.percent >= 100;
+    // Xử lý phần trăm
+    formData.percent = Number(formData.percent || 0);
+    formData.isCompleted = formData.percent >= 100;
 
-  if (editIndex) {
-    formData.dueDate = formattedDate;
-    todoTask[editIndex] = formData;
-  } else {
-    formData.isCompleted = false;
-    formData.dueDate = formattedDate;
-    todoTask.unshift(formData);
-  }
+    if (editIndex) {
+        todoTask[editIndex] = formData;
+    } else {
+        formData.isCompleted = false;
+        todoTask.unshift(formData);
+    }
 
-  saveTodoTask();
-  renderTask(todoTask);
-  handleCloseModal();
+    saveTodoTask();
+    renderTask(todoTask);
+    handleCloseModal();
 };
 
 function saveTodoTask() {
-  localStorage.setItem("todoTasks", JSON.stringify(todoTask));
+    localStorage.setItem("todoTasks", JSON.stringify(todoTask));
 }
 
 function renderTask(tasks) {
-  if (!tasks.length) {
-    todoList.innerHTML = `<h3 class="no-task">Việc chưa có nhìn cái gì ?</h3>`;
-    return;
-  }
+    if (!tasks.length) {
+        todoList.innerHTML = `
+      <div class="no-task">
+        <img src="./assets/image/search.svg" alt="" />
+        <h3 class="no-task">Việc chưa có nhìn cái gì ?</h3>
+      </div>`;
+        return;
+    }
 
-  const html = tasks
-    .map((task, index) => {
-      const check = task.percent >= 100 ? "✅" : "⛔";
-      const statusText = task.percent >= 100 ? "✅ Đã hoàn thành" : "🛑 Chưa hoàn thành";
-      const statusColor = task.percent >= 100 ? "green" : "red";
+    const html = tasks
+        .map((task, index) => {
+            const check = task.percent >= 100 ? "✅" : "⛔";
+            const statusText = task.percent >= 100 ? "✅ Đã hoàn thành" : "🛑 Chưa hoàn thành";
+            const statusColor = task.percent >= 100 ? "green" : "red";
+            let formatDate = "";
+            if (task.dueDate) formatDate = formattedDate(task.dueDate);
 
-      return `
-      <div class="task-card ${task.isCompleted ? "completed" : ""}" style="--card-color:${task.color}">
-        <div class="task-header">
-          <h3 class="task-title task-date">${task.dueDate}</h3>
+            return `
+      <div style="--card-color:${task.color}" class="task-card ${task.isCompleted ? "completed" : ""}">
+        <div class="task-header" data-index="${index}" >
+          <h3 class="task-title task-date">${formatDate}</h3>
           <button class="task-menu">
             <i class="fa-solid fa-ellipsis fa-icon"></i>
             <span class="dropdown-menu">
-              <span class="dropdown-item edit-btn" data-index="${index}">
+              <span class="dropdown-item edit-btn">
                 <i class="fa-solid fa-pen-to-square fa-icon"></i>
                 Edit
               </span>
-              <span class="dropdown-item complete complete-btn" data-index="${index}">
+              <span class="dropdown-item complete complete-btn" >
                 <i class="fa-solid fa-check fa-icon"></i>
                 Cập nhật tiến độ
               </span>
-              <span class="dropdown-item delete delete-btn" data-index="${index}">
+              <span class="dropdown-item delete delete-btn" >
                 <i class="fa-solid fa-trash fa-icon"></i>
                 Delete
               </span>
@@ -223,10 +219,10 @@ function renderTask(tasks) {
         </div>
       </div>
       `;
-    })
-    .join("");
+        })
+        .join("");
 
-  todoList.innerHTML = html;
+    todoList.innerHTML = html;
 }
 
 renderTask(todoTask);

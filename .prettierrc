@@ -9,7 +9,7 @@
   "insertPragma": false,
   "requirePragma": false,
   "jsxSingleQuote": false,
-  "tabWidth": 2,
+  "tabWidth": 4,
   "printWidth": 120,
   "quoteProps": "as-needed",
   "semi": true,
