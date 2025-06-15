@@ -184,7 +184,7 @@ function renderTask(tasks) {
             return `
       <div style="--card-color:${task.color}" class="task-card ${task.isCompleted ? "completed" : ""}">
         <div class="task-header" data-index="${index}" >
-          <h3 class="task-title task-date">${formatDate}</h3>
+            ${formatDate ? `<h3 class="task-title task-date">${formatDate}</h3>` : "Chưa chọn ngày ❣"}
           <button class="task-menu">
             <i class="fa-solid fa-ellipsis fa-icon"></i>
             <span class="dropdown-menu">
